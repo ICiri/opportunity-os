@@ -42,6 +42,21 @@ const leverConfig = z.object({
   markets,
 });
 
+const ashbyConfig = z.object({
+  id,
+  name: z.string().min(2).max(120),
+  company: z.string().min(1).max(120),
+  boardName: tenant,
+  markets,
+});
+const smartRecruitersConfig = z.object({
+  id,
+  name: z.string().min(2).max(120),
+  company: z.string().min(1).max(120),
+  companyIdentifier: tenant,
+  markets,
+});
+
 function parseList<T>(value: string | undefined, schema: z.ZodType<T[]>): {items: T[]; error?: string} {
   if (!value?.trim()) return {items: []};
   try {
@@ -58,6 +73,8 @@ function parseList<T>(value: string | undefined, schema: z.ZodType<T[]>): {items
 export function getSourceRegistry(env: Readonly<Record<string, string | undefined>> = process.env): HunterSource[] {
   const greenhouse = parseList(env.HUNTER_GREENHOUSE_SOURCES, z.array(greenhouseConfig));
   const lever = parseList(env.HUNTER_LEVER_SOURCES, z.array(leverConfig));
+  const ashby = parseList(env.HUNTER_ASHBY_SOURCES, z.array(ashbyConfig));
+  const smartRecruiters = parseList(env.HUNTER_SMARTRECRUITERS_SOURCES, z.array(smartRecruitersConfig));
   const sources: HunterSource[] = [];
 
   for (const source of greenhouse.items) {
@@ -94,6 +111,37 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
     });
   }
 
+  for (const source of ashby.items) {
+    sources.push({
+      id: source.id,
+      name: source.name,
+      company: source.company,
+      provider: 'ASHBY',
+      tenant: source.boardName,
+      markets: source.markets,
+      status: 'DISCONNECTED',
+      configured: true,
+      endpoint: `https://api.ashbyhq.com/posting-api/job-board/${source.boardName}?includeCompensation=true`,
+      note: 'Configured; no successful live check has completed in this process yet.',
+      access: 'OFFICIAL_PUBLIC_API',
+    });
+  }
+  for (const source of smartRecruiters.items) {
+    sources.push({
+      id: source.id,
+      name: source.name,
+      company: source.company,
+      provider: 'SMARTRECRUITERS',
+      tenant: source.companyIdentifier,
+      markets: source.markets,
+      status: 'DISCONNECTED',
+      configured: true,
+      endpoint: `https://api.smartrecruiters.com/v1/companies/${source.companyIdentifier}/postings?limit=100`,
+      note: 'Configured; no successful live check has completed in this process yet.',
+      access: 'OFFICIAL_PUBLIC_API',
+    });
+  }
+
   if (greenhouse.items.length === 0) {
     sources.push({
       id: 'greenhouse-configuration',
@@ -118,6 +166,33 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
       status: 'DISCONNECTED',
       configured: false,
       note: lever.error ? `Configuration rejected: ${lever.error}` : 'No sites configured in HUNTER_LEVER_SOURCES.',
+      access: 'OFFICIAL_PUBLIC_API',
+    });
+  }
+
+  if (ashby.items.length === 0) {
+    sources.push({
+      id: 'ashby-configuration',
+      name: 'Ashby official Job Postings API',
+      provider: 'ASHBY',
+      markets: [],
+      status: 'DISCONNECTED',
+      configured: false,
+      note: ashby.error ? `Configuration rejected: ${ashby.error}` : 'No boards configured in HUNTER_ASHBY_SOURCES.',
+      access: 'OFFICIAL_PUBLIC_API',
+    });
+  }
+  if (smartRecruiters.items.length === 0) {
+    sources.push({
+      id: 'smartrecruiters-configuration',
+      name: 'SmartRecruiters public Posting API',
+      provider: 'SMARTRECRUITERS',
+      markets: [],
+      status: 'DISCONNECTED',
+      configured: false,
+      note: smartRecruiters.error
+        ? `Configuration rejected: ${smartRecruiters.error}`
+        : 'No companies configured in HUNTER_SMARTRECRUITERS_SOURCES.',
       access: 'OFFICIAL_PUBLIC_API',
     });
   }

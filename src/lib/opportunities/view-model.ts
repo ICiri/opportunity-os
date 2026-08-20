@@ -71,6 +71,18 @@ export function reviewableRemoteJobs(jobs: StoredJob[]) {
     );
 }
 
+export function allLiveJobs(jobs: StoredJob[]) {
+  return jobs
+    .filter((job) => job.availability === 'LIVE')
+    .sort(
+      (left, right) =>
+        freshnessRank[left.freshness] - freshnessRank[right.freshness] ||
+        eligibilityRank[left.eligibility] - eligibilityRank[right.eligibility] ||
+        left.company.localeCompare(right.company) ||
+        left.title.localeCompare(right.title),
+    );
+}
+
 export function toOpportunityView(job: StoredJob): OpportunityView {
   const remote = assessRemotePolicy(job);
   return {

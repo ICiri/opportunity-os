@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import {describe, expect, it} from 'vitest';
 import {fetchGreenhouseJobs} from '../src/lib/hunter/adapters/greenhouse';
 import {fetchLeverJobs} from '../src/lib/hunter/adapters/lever';
+import {fetchAshbyJobs} from '../src/lib/hunter/adapters/ashby';
 import type {HunterSource} from '../src/lib/hunter/registry';
 
 const fixture = (name: string) => fs.readFileSync(`tests/fixtures/hunter/${name}`, 'utf8');
@@ -37,6 +38,19 @@ const lever: HunterSource = {
   note: 'Configured',
   access: 'OFFICIAL_PUBLIC_API',
 };
+const ashby: HunterSource = {
+  id: 'example-ashby',
+  name: 'Example Ashby',
+  company: 'Example',
+  provider: 'ASHBY',
+  tenant: 'example',
+  markets: ['EU'],
+  status: 'DISCONNECTED',
+  configured: true,
+  endpoint: 'https://api.ashbyhq.com/posting-api/job-board/example?includeCompensation=true',
+  note: 'Configured',
+  access: 'OFFICIAL_PUBLIC_API',
+};
 
 describe('official provider adapters', () => {
   it('normalizes published Greenhouse jobs and excludes prospect posts', async () => {
@@ -63,6 +77,20 @@ describe('official provider adapters', () => {
     expect(result.jobs[0]).toMatchObject({externalId: 'lever-701', availability: 'LIVE'});
     expect(result.jobs[0].potentialMax).toBeUndefined();
     expect(result.jobs[0].description).toContain('B2B');
+  });
+
+  it('normalizes jobs from the official Ashby posting API', async () => {
+    const result = await fetchAshbyJobs(ashby, {
+      fetchImpl: response('ashby-jobs.json') as typeof fetch,
+      now: new Date('2026-08-20T09:00:00Z'),
+    });
+    expect(result.jobs[0]).toMatchObject({
+      provider: 'ASHBY',
+      externalId: 'ashby-801',
+      location: 'Remote — Europe',
+      availability: 'LIVE',
+    });
+    expect(result.jobs[0].description).toContain('B2B contract');
   });
 
   it('fails the source closed on non-2xx responses', async () => {

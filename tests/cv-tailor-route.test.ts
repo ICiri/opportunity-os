@@ -31,7 +31,7 @@ const fact = (
 const facts = (): StoredCareerFact[] => [
   fact('20000000-0000-4000-8000-000000000001', 'HEADLINE', 'Source headline'),
   fact('20000000-0000-4000-8000-000000000002', 'SUMMARY', 'Source summary'),
-  fact('20000000-0000-4000-8000-000000000003', 'EXPERIENCE', 'Source experience'),
+  fact('20000000-0000-4000-8000-000000000003', 'EXPERIENCE', 'Developed C#/.NET backend services.'),
   fact('20000000-0000-4000-8000-000000000004', 'SKILL', 'Source skill'),
   fact('20000000-0000-4000-8000-000000000005', 'CONTACT', 'Private contact'),
   fact('20000000-0000-4000-8000-000000000006', 'EDUCATION', 'Source education'),
@@ -46,7 +46,7 @@ const job = (overrides: Partial<StoredJob> = {}): StoredJob => ({
   company: 'Source Company',
   location: 'Remote · Europe',
   url: 'https://boards.example.test/jobs/1',
-  description: 'Fully remote role for candidates in Europe.',
+  description: 'Fully remote role for candidates in Europe. C#/.NET development experience is required.',
   verifiedAt: '2026-08-16T10:00:00.000Z',
   availability: 'LIVE',
   canonicalKey: 'canonical-job-1',
@@ -134,7 +134,9 @@ describe('CV tailoring route real-data boundary', () => {
       headline: 'Source headline',
       summary: 'Source summary',
     });
-    expect(fixture.captured()?.baseCv.bullets.map((item) => item.text)).toEqual(['Source experience', 'Source skill']);
+    expect(fixture.captured()?.baseCv.bullets.map((item) => item.text)).toEqual([
+      'Developed C#/.NET backend services.',
+    ]);
     expect(fixture.captured()?.verifiedFacts.map((item) => item.statement)).not.toContain('Private contact');
     expect(fixture.captured()?.verifiedFacts.map((item) => item.statement)).not.toContain('Source education');
     expect(JSON.stringify(fixture.captured())).not.toContain('INJECTED CLIENT');

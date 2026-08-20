@@ -36,7 +36,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
               </Link>
               <Link href="/opportunities">
                 <Icon name="RE" />
-                Remote work
+                All jobs
               </Link>
               <Link href="/hunter">
                 <Icon name="HU" />
@@ -49,6 +49,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
               <Link href="/cv-studio">
                 <Icon name="CV" />
                 CV Studio
+              </Link>
+              <Link href="/application-batches">
+                <Icon name="AP" />
+                Application batches
               </Link>
               <Link href="/relationships">
                 <Icon name="GR" />
@@ -80,9 +84,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <Link href="/">Today</Link>
           <Link href="/conversations">Inbox</Link>
           <Link href="/hunter">Hunter</Link>
-          <Link href="/opportunities">Remote</Link>
+          <Link href="/opportunities">Jobs</Link>
           <Link href="/bounties">Bounties</Link>
           <Link href="/cv-studio">CV</Link>
+          <Link href="/application-batches">Apply</Link>
         </nav>
       </body>
     </html>

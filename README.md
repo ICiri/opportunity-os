@@ -20,6 +20,10 @@ Local-first, mobile-first opportunity intelligence for jobs, contracts, referral
 
 The current boundaries and unproven claims are listed in [docs/AUDIT_STATUS.md](docs/AUDIT_STATUS.md). In particular, this is not a claim of complete internet coverage, production readiness or 100% defect freedom.
 
+For a concise Croatian snapshot of what is actually connected, current local source counts and why the UI may show only two companies, see [docs/TRENUTNO_STANJE.md](docs/TRENUTNO_STANJE.md).
+
+The current continuation point, verified evidence, P0 blockers and exact implementation order are recorded in [docs/AUDIT_HANDOVER_2026-08-20.md](docs/AUDIT_HANDOVER_2026-08-20.md).
+
 ## Local start
 
 ```powershell
