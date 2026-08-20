@@ -1,0 +1,22 @@
+node_modules
+.next
+.next-dev
+.env
+.env.*
+!.env.example
+coverage
+playwright-report
+test-results
+*.tsbuildinfo
+supabase/.temp
+supabase/.branches/
+.DS_Store
+.dev-server.pid
+.dev-server.log
+.dev-server-error.log
+.opportunity-private/
+.execution-pack/
+
+# Private workstation audit notes derived from real mailbox data
+docs/EMAIL_AUDIT_INITIAL_FINDINGS.md
+docs/CONVERSATION_AUDIT.md

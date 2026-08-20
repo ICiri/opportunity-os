@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "opportunity-os-daily-hunter",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-16",
+  "triggers": {
+    "crons": ["0 9 * * *", "0 10 * * *"],
+  },
+  "vars": {
+    "OPPORTUNITY_OS_BASE_URL": "https://replace-with-dev-host.example",
+  },
+}

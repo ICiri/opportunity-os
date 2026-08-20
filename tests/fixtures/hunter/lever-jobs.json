@@ -1,0 +1,18 @@
+[
+  {
+    "id": "lever-701",
+    "text": "Integration Consultant",
+    "createdAt": 1786752000000,
+    "categories": {
+      "location": "EMEA",
+      "allLocations": ["EMEA"],
+      "commitment": "Contract",
+      "team": "Engineering"
+    },
+    "descriptionPlain": "Remote across Europe on a B2B basis. Kafka and API integration experience required.",
+    "additionalPlain": "Confirm the permitted residence countries before applying.",
+    "workplaceType": "remote",
+    "hostedUrl": "https://jobs.lever.co/atlas/lever-701",
+    "applyUrl": "https://jobs.lever.co/atlas/lever-701/apply"
+  }
+]

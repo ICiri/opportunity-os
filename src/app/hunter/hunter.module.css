@@ -1,0 +1,261 @@
+.page {
+  max-width: 86rem;
+}
+.schedule {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+}
+.schedule > div {
+  padding: 1.2rem;
+  border-right: 1px solid var(--line);
+}
+.schedule > div:last-child {
+  border: 0;
+}
+.schedule span,
+.schedule small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+}
+.schedule strong {
+  display: block;
+  margin: 0.45rem 0;
+  font-size: 1.15rem;
+}
+.schedule small {
+  color: var(--subtle);
+  line-height: 1.45;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+  margin-bottom: var(--space-7);
+}
+.metrics article {
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+}
+.metrics article:last-child {
+  border: 0;
+}
+.metrics span,
+.metrics small {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+}
+.metrics strong {
+  display: block;
+  font-size: 1.35rem;
+  margin: 0.5rem 0;
+}
+.metrics small {
+  color: var(--subtle);
+  line-height: 1.4;
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.5fr);
+  gap: var(--space-6);
+}
+.sources {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.sources article {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  padding: 1rem;
+}
+.sources article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.sources h3 {
+  font-size: 13px;
+  margin: 0.8rem 0 0.45rem;
+}
+.sources p {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+  min-height: 3rem;
+}
+.sources small {
+  color: var(--subtle);
+  font-size: 9px;
+}
+.sources b {
+  font-size: 8px;
+  color: var(--subtle);
+}
+.status {
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  font-size: 8px;
+  font-weight: 800;
+}
+.live {
+  color: var(--green);
+  border-color: #315541;
+}
+.research {
+  color: var(--amber);
+  border-color: #584931;
+}
+.disconnected {
+  color: var(--red);
+  border-color: #57383b;
+}
+.degraded {
+  color: var(--violet);
+  border-color: #493c5e;
+}
+.audit {
+  align-self: start;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: 1.2rem;
+}
+.audit h2 {
+  margin: 0.5rem 0 1rem;
+}
+.audit dl {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.65rem;
+  margin: 0;
+}
+.audit dt {
+  font-size: 9px;
+  color: var(--subtle);
+}
+.audit dd {
+  margin: 0;
+  font-size: 10px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1100px) {
+  .metrics {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .metrics article:nth-child(3) {
+    border-right: 0;
+  }
+}
+@media (max-width: 760px) {
+  .schedule,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .schedule > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .metrics article:nth-child(2n) {
+    border-right: 0;
+  }
+  .sources {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 390px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+  .metrics article {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+.jobs {
+  margin-top: 3rem;
+}
+.jobList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.jobList article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.jobList article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+}
+.jobList h3 {
+  font-size: 12px;
+  margin: 0.2rem 0 0;
+}
+.jobList b {
+  font-size: 9px;
+  color: var(--green);
+}
+.jobList p,
+.jobList small {
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+.jobActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+.jobActions a {
+  font-size: 8px;
+  color: var(--green);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 0.5rem;
+}
+.eligible {
+  color: var(--green);
+}
+.likely_eligible {
+  color: var(--blue);
+}
+.unknown {
+  color: var(--amber);
+}
+@media (max-width: 900px) {
+  .jobList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 680px) {
+  .jobList {
+    grid-template-columns: 1fr;
+  }
+}

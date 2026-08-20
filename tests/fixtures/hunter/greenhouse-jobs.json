@@ -1,0 +1,23 @@
+{
+  "jobs": [
+    {
+      "id": 501,
+      "internal_job_id": 9001,
+      "title": "Senior Payments Engineer",
+      "updated_at": "2026-08-15T10:30:00Z",
+      "absolute_url": "https://boards.greenhouse.io/northstar/jobs/501",
+      "location": {"name": "Remote - European Union"},
+      "content": "&lt;p&gt;Remote within the EU. Build payment APIs with .NET and Kafka.&lt;/p&gt;"
+    },
+    {
+      "id": 999,
+      "internal_job_id": null,
+      "title": "General interest",
+      "updated_at": "2026-08-15T10:30:00Z",
+      "absolute_url": "https://boards.greenhouse.io/northstar/jobs/999",
+      "location": {"name": "Remote"},
+      "content": "Prospect post, not a concrete vacancy."
+    }
+  ],
+  "meta": {"total": 2}
+}

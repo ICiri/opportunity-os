@@ -1,0 +1,13 @@
+.next
+.next-dev
+.execution-pack
+artifacts
+coverage
+node_modules
+next-env.d.ts
+playwright-report
+supabase/.temp
+test-results
+package-lock.json
+*.png
+*.zip
