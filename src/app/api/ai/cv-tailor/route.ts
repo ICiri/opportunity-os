@@ -6,6 +6,8 @@ import {loadVerifiedCareerFacts, recordSuccessfulCvAiRun} from '../../../../lib/
 import {createOpenAIProvider} from '../../../../lib/ai/server';
 import type {CvTailoringInput} from '../../../../lib/ai/schemas';
 import {assessRemotePolicy} from '../../../../lib/opportunities/view-model';
+import {analyzeRoleFit, selectRoleRelevantFactIds} from '../../../../lib/cv-agent/role-fit';
+import {hasRoleFitOverride} from '../../../../lib/cv-agent/repository';
 
 const LOCAL_USER_ID = process.env.OPPORTUNITY_LOCAL_USER_ID ?? '20000000-0000-4000-8000-000000000001';
 const requestSchema = z.object({
@@ -58,10 +60,26 @@ export async function handleCvTailorRequest(
     ) {
       return Response.json({error: 'INCONSISTENT_CV_PROVENANCE'}, {status: 409});
     }
+    const roleFit = analyzeRoleFit(opportunity.description, storedFacts);
+    const passesRoleFit = ['EXCELLENT_MATCH', 'GOOD_MATCH'].includes(roleFit.decision);
+    const overridden = passesRoleFit
+      ? false
+      : await hasRoleFitOverride(LOCAL_USER_ID, opportunity.id, roleFit.analysisHash);
+    if (!passesRoleFit && !overridden) {
+      return Response.json(
+        {error: 'CV_PREPARATION_BLOCKED', decision: roleFit.decision, hardGaps: roleFit.hardGaps},
+        {status: 409},
+      );
+    }
     const headline = storedFacts.find((fact) => fact.category === 'HEADLINE');
     const summary = storedFacts.find((fact) => fact.category === 'SUMMARY');
-    const reusableFacts = storedFacts.filter((fact) => !['CONTACT', 'EDUCATION'].includes(fact.category));
-    const sourceBullets = storedFacts.filter((fact) => ['EXPERIENCE', 'SKILL'].includes(fact.category));
+    const selectedFactIds = selectRoleRelevantFactIds(roleFit);
+    const reusableFacts = storedFacts.filter(
+      (fact) => selectedFactIds.has(fact.id) && !['CONTACT', 'EDUCATION'].includes(fact.category),
+    );
+    const sourceBullets = storedFacts.filter(
+      (fact) => selectedFactIds.has(fact.id) && ['EXPERIENCE', 'SKILL'].includes(fact.category),
+    );
     if (!headline || !summary || !sourceBullets.length || !reusableFacts.length) {
       return Response.json({error: 'SOURCE_LINKED_CAREER_FACTS_REQUIRED'}, {status: 409});
     }

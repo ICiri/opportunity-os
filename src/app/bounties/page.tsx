@@ -4,11 +4,11 @@ export default function BountiesPage() {
     <div className="page">
       <div className="topbar">
         <div>
-          <span className="kicker">Directory-only · no live adapter</span>
-          <h1>Bounties</h1>
+          <span className="kicker">Security and paid software work</span>
+          <h1>All bounty opportunities</h1>
           <p>
-            Saved links to official directories and safety guidance, separated from remote jobs. Freshness, enrollment
-            and program scope are not verified in this app.
+            Visible directories for paid open-source development and authorized security research. Freshness, claim
+            status, enrollment and exact scope must be verified on the official source.
           </p>
         </div>
       </div>
@@ -17,7 +17,9 @@ export default function BountiesPage() {
           <article key={item.id}>
             <div>
               <span className="state reactivate">{item.authorization.replaceAll('_', ' ')}</span>
-              <b>{item.platform}</b>
+              <b>
+                {item.category.replaceAll('_', ' ')} · {item.platform}
+              </b>
             </div>
             <h2>{item.name}</h2>
             <p>{item.nextStep}</p>

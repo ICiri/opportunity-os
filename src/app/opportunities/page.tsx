@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import {loadPersistedHunterJobs} from '@/lib/hunter/persistence';
-import {reviewableRemoteJobs, toOpportunityView} from '@/lib/opportunities/view-model';
+import {allLiveJobs, toOpportunityView} from '@/lib/opportunities/view-model';
 
 export const dynamic = 'force-dynamic';
 
 export default async function OpportunitiesPage() {
-  const jobs = reviewableRemoteJobs(await loadPersistedHunterJobs(500)).map(toOpportunityView);
+  const jobs = allLiveJobs(await loadPersistedHunterJobs(500)).map(toOpportunityView);
+  const remote = jobs.filter((job) => job.remotePolicy === 'REMOTE').length;
   const eligible = jobs.filter((job) => job.eligibility === 'ELIGIBLE').length;
   const lastVerified = jobs
     .map((job) => job.verifiedAt)
@@ -18,21 +19,23 @@ export default async function OpportunitiesPage() {
       <div className="topbar">
         <div>
           <span className="kicker">Live official ATS evidence</span>
-          <h1>Remote opportunities</h1>
+          <h1>All job opportunities</h1>
           <p>
-            Only persisted Greenhouse/Lever listings with explicit remote wording and explicit or likely Croatia/EU
-            eligibility are shown. No manual shortlist and no invented fit score.
+            Every persisted live listing from Greenhouse, Lever, Ashby and SmartRecruiters is visible. Remote policy and
+            Croatia/EU eligibility remain explicit so you can decide what is worth discussing with the company.
           </p>
         </div>
         <div className="planning-status">
-          <span>Reviewable now</span>
+          <span>Live opportunities</span>
           <b>{jobs.length}</b>
-          <small>{eligible} explicitly eligible</small>
+          <small>
+            {remote} remote · {eligible} explicitly eligible
+          </small>
         </div>
       </div>
       {jobs.length === 0 ? (
         <section className="empty-state">
-          <h2>No verified remote opportunity is available</h2>
+          <h2>No verified live opportunity is available</h2>
           <p>Run the hunter with live sources. This screen stays empty instead of substituting sample jobs.</p>
           <Link href="/hunter" className="primary-link">
             Open Daily Hunter <span>→</span>

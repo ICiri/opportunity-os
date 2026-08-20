@@ -1,6 +1,7 @@
 import type {DailyBriefSelection} from './contracts';
 import type {CvTailoringDraft, CvTailoringInput, DailyBriefNarrative} from './schemas';
 import {AIGroundingError} from './errors';
+import {containsFactStoreLanguage} from '../cv-agent/role-fit';
 
 function duplicates(values: string[]) {
   const seen = new Set<string>();
@@ -122,6 +123,14 @@ export function assertCvInputGrounded(input: CvTailoringInput) {
 }
 
 export function assertCvDraftGrounded(input: CvTailoringInput, draft: CvTailoringDraft) {
+  const candidateFacing = [
+    draft.headline.text,
+    draft.summary.text,
+    ...draft.bulletChanges.map((change) => change.text),
+  ];
+  if (candidateFacing.some(containsFactStoreLanguage)) {
+    throw new AIGroundingError('CV_OUTPUT_CONTAINS_FACT_STORE_LANGUAGE');
+  }
   const allowedFacts = new Set(input.verifiedFacts.map((fact) => fact.id));
   const facts = new Map(input.verifiedFacts.map((fact) => [fact.id, fact.statement]));
   const allowedBullets = new Set(input.baseCv.bullets.map((bullet) => bullet.id));

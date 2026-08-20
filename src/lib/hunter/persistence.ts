@@ -250,7 +250,13 @@ export async function loadPersistedHunterJobs(limit = 100, now = new Date()): Pr
         id: String(row.id),
         sourceId: String(row.source_uuid),
         externalId: String(row.external_id),
-        provider: String(row.adapter_name).includes('lever') ? 'LEVER' : 'GREENHOUSE',
+        provider: String(row.adapter_name).includes('lever')
+          ? 'LEVER'
+          : String(row.adapter_name).includes('ashby')
+            ? 'ASHBY'
+            : String(row.adapter_name).includes('smartrecruiters')
+              ? 'SMARTRECRUITERS'
+              : 'GREENHOUSE',
         title: String(row.title),
         company: String(row.company),
         location: String(row.location ?? 'Location not specified'),

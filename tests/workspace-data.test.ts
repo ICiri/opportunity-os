@@ -16,7 +16,7 @@ describe('workspace evidence boundaries', () => {
     const cvRoute = fs.readFileSync('src/app/api/ai/cv-tailor/route.ts', 'utf8');
     const conversations = fs.readFileSync('src/app/conversations/page.tsx', 'utf8');
     expect(opportunities).toContain('loadPersistedHunterJobs');
-    expect(opportunities).toContain('reviewableRemoteJobs');
+    expect(opportunities).toContain('allLiveJobs');
     expect(cvRoute).toContain('loadPersistedHunterJobs');
     expect(cvRoute).not.toContain('data/opportunities');
     expect(conversations).toContain('listPersistedConversations');
