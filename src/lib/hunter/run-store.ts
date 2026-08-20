@@ -137,9 +137,10 @@ async function execute(
           source.error ?? (source.status === 'LIVE' ? `Last live check: ${source.checkedAt}` : 'No live connection.'),
       });
     }
+    const persistenceFailed = !persisted && result.status !== 'FAILED';
     Object.assign(run, {
-      status: persisted ? result.status : 'AUDIT_FAILED',
-      failureCode: persisted ? result.failureCode : 'PERSISTENCE_FAILED',
+      status: persistenceFailed ? 'AUDIT_FAILED' : result.status,
+      failureCode: persistenceFailed ? 'PERSISTENCE_FAILED' : result.failureCode,
       progress: 100,
       seen: result.seen,
       created: result.created,
