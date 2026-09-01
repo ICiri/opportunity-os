@@ -61,5 +61,11 @@ export const gmailPayloadAad = (userId: string, messageId: string, field: 'subje
 export const cvPayloadAad = (userId: string, cvVersionId: string) =>
   `opportunity-os:cv:v1:${userId}:${cvVersionId}:document`;
 
+export const applicationPackagePayloadAad = (
+  userId: string,
+  packageId: string,
+  field: 'recipient' | 'subject' | 'body' | 'pdf',
+) => `opportunity-os:application-package:v1:${userId}:${packageId}:${field}`;
+
 export const aiPayloadAad = (userId: string, aiRunId: string, field: 'input' | 'output') =>
   `opportunity-os:ai:v1:${userId}:${aiRunId}:${field}`;

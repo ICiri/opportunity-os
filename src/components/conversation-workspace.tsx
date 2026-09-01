@@ -153,8 +153,8 @@ export function ConversationWorkspace({
                   </header>
                   <h3>{message.subject}</h3>
                   <p className="mail-body">{message.body}</p>
-                  {message.attachments.map((file) => (
-                    <div className="attachment-card" key={file.filename}>
+                  {message.attachments.map((file, attachmentIndex) => (
+                    <div className="attachment-card" key={`${message.id}:${file.filename}:${attachmentIndex}`}>
                       <span>PDF</span>
                       <div>
                         <b>{file.filename}</b>

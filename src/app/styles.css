@@ -1407,6 +1407,13 @@ p {
   background: var(--surface);
   padding: 1.2rem;
 }
+.table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .forecast-table {
   overflow-x: auto;
 }

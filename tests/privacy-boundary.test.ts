@@ -35,6 +35,7 @@ describe('private mailbox boundary', () => {
     const page = fs.readFileSync('src/app/conversations/[id]/page.tsx', 'utf8');
     const repository = fs.readFileSync('src/lib/conversation/repository.ts', 'utf8');
     const workspace = fs.readFileSync('src/components/conversation-workspace.tsx', 'utf8');
+    expect(workspace).toContain('key={`${message.id}:${file.filename}:${attachmentIndex}`}');
     expect(page).toMatch(/export const dynamic\s*=\s*['"]force-dynamic['"]/);
     expect(page).not.toContain('generateStaticParams');
     expect(page).toContain('getPersistedConversation(LOCAL_USER_ID, id)');

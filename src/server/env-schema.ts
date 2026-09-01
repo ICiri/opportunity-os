@@ -19,6 +19,7 @@ export const serverEnvSchema = z.object({
   HUNTER_LEVER_SOURCES: z.string().optional(),
   HUNTER_ASHBY_SOURCES: z.string().optional(),
   HUNTER_SMARTRECRUITERS_SOURCES: z.string().optional(),
+  HUNTER_WORKABLE_SOURCES: z.string().optional(),
   HUNTER_CRON_SECRET: z.string().min(16).optional(),
   TZ: z.string().optional(),
 });
