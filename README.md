@@ -77,6 +77,12 @@ npx tsx scripts/import-cv-masters.ts --en <english.pdf> --hr <croatian.pdf>
 
 There is not yet a repeatable Gmail OAuth/incremental import command. Preserve or back up the current private local database before any reset. See [docs/RUNBOOK.md](docs/RUNBOOK.md).
 
+## Optional broader discovery and safe autofill
+
+`HUNTER_JOBSPY_SOURCES` can connect the hunter to a JobSpy-compatible API running on loopback. Results pass through the existing canonical deduplication, eligibility filtering and persisted audit trail. Remote endpoints are rejected. Job-board access remains subject to provider terms and rate limits; account-login automation is not included.
+
+The unpacked Chrome extension in `integrations/browser-autofill` fills basic contact fields only after a user click. It never uploads a CV, answers work-authorization, demographic or free-text questions, advances a form or clicks Submit. See its README for installation.
+
 ## Safety
 
 No mass email, LinkedIn automation, fabricated CV claims, exploit automation or bounty testing outside explicit authorized scope. Service-role credentials, the envelope-encryption key and OpenAI credentials are server-only. Production requests fail closed until real Supabase application authentication is implemented.

@@ -85,6 +85,17 @@ export const sourceCatalog: SourceCatalogItem[] = [
     contractSupport: true,
     urlPattern: 'api.smartrecruiters.com/v1/companies/{company}/postings',
   },
+  {
+    id: 'global-jobspy-local-bridge',
+    name: 'JobSpy local bridge',
+    regions: ['GLOBAL'],
+    kind: 'GLOBAL',
+    tier: 'A',
+    state: 'ADAPTER_IMPLEMENTED',
+    remoteSupport: true,
+    contractSupport: true,
+    urlPattern: '127.0.0.1:8001/api/v1/search_jobs',
+  },
   ...add('Workable', ['GLOBAL'], 'ATS', 'S', 'NEEDS_API_KEY', true, true),
   ...add('Personio;Recruitee;BambooHR;Breezy HR;JazzHR', ['GLOBAL'], 'ATS', 'S', 'READY_TO_BUILD', true, true),
   ...add(

@@ -15,7 +15,7 @@ export type HunterSource = {
   configured: boolean;
   endpoint?: string;
   note: string;
-  access: 'OFFICIAL_PUBLIC_API' | 'RESEARCH_ONLY';
+  access: 'OFFICIAL_PUBLIC_API' | 'LOCAL_DISCOVERY_API' | 'RESEARCH_ONLY';
 };
 
 const id = z.string().regex(/^[a-z0-9][a-z0-9_-]{1,63}$/i);
@@ -64,6 +64,26 @@ const workableConfig = z.object({
   query: z.string().max(120).optional(),
   markets,
 });
+const jobSpyConfig = z.object({
+  id,
+  name: z.string().min(2).max(120),
+  endpoint: z
+    .string()
+    .url()
+    .refine((value) => {
+      const url = new URL(value);
+      return ['127.0.0.1', 'localhost'].includes(url.hostname) && ['http:', 'https:'].includes(url.protocol);
+    }, 'JobSpy endpoint must be loopback-only.'),
+  searchTerm: z.string().min(2).max(160),
+  location: z.string().min(2).max(120),
+  sites: z
+    .array(z.enum(['indeed', 'linkedin', 'glassdoor', 'google', 'zip_recruiter']))
+    .min(1)
+    .max(5),
+  resultsWanted: z.number().int().min(1).max(100).default(20),
+  hoursOld: z.number().int().min(1).max(720).default(168),
+  markets,
+});
 
 function parseList<T>(value: string | undefined, schema: z.ZodType<T[]>): {items: T[]; error?: string} {
   if (!value?.trim()) return {items: []};
@@ -84,6 +104,7 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
   const ashby = parseList(env.HUNTER_ASHBY_SOURCES, z.array(ashbyConfig));
   const smartRecruiters = parseList(env.HUNTER_SMARTRECRUITERS_SOURCES, z.array(smartRecruitersConfig));
   const workable = parseList(env.HUNTER_WORKABLE_SOURCES, z.array(workableConfig));
+  const jobSpy = parseList(env.HUNTER_JOBSPY_SOURCES, z.array(jobSpyConfig));
   const sources: HunterSource[] = [];
 
   for (const source of greenhouse.items) {
@@ -164,6 +185,28 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
       access: 'RESEARCH_ONLY',
     });
   }
+  for (const source of jobSpy.items) {
+    const endpoint = new URL('/api/v1/search_jobs', source.endpoint);
+    source.sites.forEach((site) => endpoint.searchParams.append('site_name', site));
+    endpoint.searchParams.set('search_term', source.searchTerm);
+    endpoint.searchParams.set('location', source.location);
+    endpoint.searchParams.set('results_wanted', String(source.resultsWanted));
+    endpoint.searchParams.set('hours_old', String(source.hoursOld));
+    endpoint.searchParams.set('is_remote', 'true');
+    endpoint.searchParams.set('job_type', 'contract');
+    endpoint.searchParams.set('description_format', 'markdown');
+    sources.push({
+      id: source.id,
+      name: source.name,
+      provider: 'JOBSPY',
+      markets: source.markets,
+      status: 'DISCONNECTED',
+      configured: true,
+      endpoint: endpoint.toString(),
+      note: 'Configured against a loopback-only JobSpy service; no account login or submit automation is used.',
+      access: 'LOCAL_DISCOVERY_API',
+    });
+  }
 
   if (greenhouse.items.length === 0) {
     sources.push({
@@ -233,6 +276,20 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
       access: 'RESEARCH_ONLY',
     });
   }
+  if (jobSpy.items.length === 0) {
+    sources.push({
+      id: 'jobspy-configuration',
+      name: 'JobSpy local discovery service',
+      provider: 'JOBSPY',
+      markets: [],
+      status: 'DISCONNECTED',
+      configured: false,
+      note: jobSpy.error
+        ? `Configuration rejected: ${jobSpy.error}`
+        : 'No loopback service configured in HUNTER_JOBSPY_SOURCES.',
+      access: 'LOCAL_DISCOVERY_API',
+    });
+  }
 
   sources.push(
     {
@@ -259,7 +316,9 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
 }
 
 export function registryMetrics(sources: HunterSource[]) {
-  const runnable = sources.filter((source) => source.configured && source.access === 'OFFICIAL_PUBLIC_API');
+  const runnable = sources.filter(
+    (source) => source.configured && ['OFFICIAL_PUBLIC_API', 'LOCAL_DISCOVERY_API'].includes(source.access),
+  );
   const live = runnable.filter((source) => source.status === 'LIVE');
   return {
     registeredSources: sources.length,

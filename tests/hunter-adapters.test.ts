@@ -3,6 +3,7 @@ import {describe, expect, it} from 'vitest';
 import {fetchGreenhouseJobs} from '../src/lib/hunter/adapters/greenhouse';
 import {fetchLeverJobs} from '../src/lib/hunter/adapters/lever';
 import {fetchAshbyJobs} from '../src/lib/hunter/adapters/ashby';
+import {fetchJobSpyJobs} from '../src/lib/hunter/adapters/jobspy';
 import type {HunterSource} from '../src/lib/hunter/registry';
 
 const fixture = (name: string) => fs.readFileSync(`tests/fixtures/hunter/${name}`, 'utf8');
@@ -51,6 +52,17 @@ const ashby: HunterSource = {
   note: 'Configured',
   access: 'OFFICIAL_PUBLIC_API',
 };
+const jobSpy: HunterSource = {
+  id: 'jobspy-contracts',
+  name: 'JobSpy contracts',
+  provider: 'JOBSPY',
+  markets: ['EU', 'UK'],
+  status: 'DISCONNECTED',
+  configured: true,
+  endpoint: 'http://127.0.0.1:8001/api/v1/search_jobs?site_name=indeed',
+  note: 'Configured',
+  access: 'LOCAL_DISCOVERY_API',
+};
 
 describe('official provider adapters', () => {
   it('normalizes published Greenhouse jobs and excludes prospect posts', async () => {
@@ -91,6 +103,40 @@ describe('official provider adapters', () => {
       availability: 'LIVE',
     });
     expect(result.jobs[0].description).toContain('B2B contract');
+  });
+
+  it('normalizes contract discovery from a loopback-only JobSpy service', async () => {
+    const payload = JSON.stringify({
+      jobs: [
+        {
+          id: 'indeed-901',
+          site: 'indeed',
+          job_url: 'https://example.com/jobs/901',
+          title: 'Senior .NET Contractor',
+          company: 'Example Consulting',
+          location: 'Remote - Europe',
+          description: 'Remote B2B contract for 20 hours per week.',
+          date_posted: '2026-08-31',
+          job_type: 'contract',
+        },
+      ],
+    });
+    const result = await fetchJobSpyJobs(jobSpy, {
+      fetchImpl: (async () => new Response(payload, {status: 200})) as typeof fetch,
+      now: new Date('2026-09-01T08:00:00Z'),
+    });
+    expect(result.jobs[0]).toMatchObject({
+      provider: 'JOBSPY',
+      externalId: 'indeed-901',
+      company: 'Example Consulting',
+      availability: 'LIVE',
+    });
+  });
+
+  it('refuses a non-loopback JobSpy endpoint', async () => {
+    await expect(fetchJobSpyJobs({...jobSpy, endpoint: 'https://example.com/jobs'})).rejects.toMatchObject({
+      code: 'INVALID_CONFIGURATION',
+    });
   });
 
   it('fails the source closed on non-2xx responses', async () => {

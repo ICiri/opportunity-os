@@ -4,10 +4,10 @@ import {sourceCatalog, sourceCatalogSummary} from '../src/data/source-catalog';
 describe('master opportunity source catalog', () => {
   it('contains the requested broad market registry without overstating live connections', () => {
     expect(sourceCatalog.length).toBeGreaterThan(150);
-    expect(sourceCatalogSummary.ADAPTER_IMPLEMENTED).toBe(4);
+    expect(sourceCatalogSummary.ADAPTER_IMPLEMENTED).toBe(5);
     expect(
       sourceCatalog.filter((source) => source.state === 'ADAPTER_IMPLEMENTED').map((source) => source.name),
-    ).toEqual(['Greenhouse', 'Lever', 'Ashby', 'SmartRecruiters']);
+    ).toEqual(['Greenhouse', 'Lever', 'Ashby', 'SmartRecruiters', 'JobSpy local bridge']);
     expect(sourceCatalog.find((source) => source.name === 'Workable')?.state).toBe('NEEDS_API_KEY');
   });
 

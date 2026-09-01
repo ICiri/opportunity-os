@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Opportunity OS profile</title>
+  </head>
+  <body>
+    <main>
+      <h1>Local application profile</h1>
+      <p>
+        This profile stays in Chrome local storage. API keys, passwords and demographic answers are intentionally
+        unsupported.
+      </p>
+      <form id="profile">
+        <label>First name<input name="firstName" autocomplete="given-name" /></label>
+        <label>Last name<input name="lastName" autocomplete="family-name" /></label>
+        <label>Email<input name="email" type="email" autocomplete="email" /></label>
+        <label>Phone<input name="phone" autocomplete="tel" /></label>
+        <label>City<input name="city" autocomplete="address-level2" /></label>
+        <label>Country<input name="country" autocomplete="country-name" /></label>
+        <label>LinkedIn URL<input name="linkedin" type="url" /></label>
+        <label>GitHub URL<input name="github" type="url" /></label>
+        <label>Portfolio URL<input name="portfolio" type="url" /></label>
+        <button type="submit">Save locally</button>
+        <output id="saved" aria-live="polite"></output>
+      </form>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

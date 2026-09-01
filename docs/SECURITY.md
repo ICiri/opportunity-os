@@ -16,6 +16,9 @@
 - Bounty execution throws unless `AUTHORIZED_SCOPE` is exactly `YES`.
 - The Gmail UI has no autonomous send path. “Approve locally” records UI intent only and sends nothing.
 
+- Optional JobSpy discovery is accepted only from a loopback endpoint. It receives search terms, never Gmail tokens, CV bytes, application packages or browser credentials.
+- The bundled browser autofill extension uses click-scoped `activeTab` access, stores its small contact profile locally, excludes sensitive/judgment fields and never advances or submits a form.
+
 ## Access boundary
 
 Local development uses a fixed local identity and direct server-side Postgres access. That is acceptable only on loopback. Anonymous access is enabled only for development or the explicit loopback test harness.

@@ -52,7 +52,9 @@ export async function executeHunterRun(options: {
   timeoutMs?: number;
 }): Promise<HunterExecution> {
   const now = options.now ?? new Date();
-  const runnable = options.registry.filter((source) => source.configured && source.access === 'OFFICIAL_PUBLIC_API');
+  const runnable = options.registry.filter(
+    (source) => source.configured && ['OFFICIAL_PUBLIC_API', 'LOCAL_DISCOVERY_API'].includes(source.access),
+  );
   const research = options.registry
     .filter((source) => !source.configured || source.access === 'RESEARCH_ONLY')
     .map<SourceExecution>((source) => ({
