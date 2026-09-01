@@ -1,6 +1,6 @@
 import {createHash, randomUUID} from 'node:crypto';
 
-export type Provider = 'GREENHOUSE' | 'LEVER' | 'ASHBY' | 'SMARTRECRUITERS';
+export type Provider = 'GREENHOUSE' | 'LEVER' | 'ASHBY' | 'SMARTRECRUITERS' | 'WORKABLE';
 export type Availability = 'LIVE' | 'UNKNOWN' | 'CLOSED';
 export type Freshness = 'NEW' | 'FRESH' | 'CURRENT' | 'AGING' | 'OLD' | 'EXPIRED' | 'UNKNOWN';
 export type Eligibility = 'ELIGIBLE' | 'LIKELY_ELIGIBLE' | 'UNKNOWN' | 'NOT_ELIGIBLE';

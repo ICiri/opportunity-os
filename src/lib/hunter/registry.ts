@@ -56,6 +56,14 @@ const smartRecruitersConfig = z.object({
   companyIdentifier: tenant,
   markets,
 });
+const workableConfig = z.object({
+  id,
+  name: z.string().min(2).max(120),
+  company: z.string().min(1).max(120),
+  subdomain: tenant,
+  query: z.string().max(120).optional(),
+  markets,
+});
 
 function parseList<T>(value: string | undefined, schema: z.ZodType<T[]>): {items: T[]; error?: string} {
   if (!value?.trim()) return {items: []};
@@ -75,6 +83,7 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
   const lever = parseList(env.HUNTER_LEVER_SOURCES, z.array(leverConfig));
   const ashby = parseList(env.HUNTER_ASHBY_SOURCES, z.array(ashbyConfig));
   const smartRecruiters = parseList(env.HUNTER_SMARTRECRUITERS_SOURCES, z.array(smartRecruitersConfig));
+  const workable = parseList(env.HUNTER_WORKABLE_SOURCES, z.array(workableConfig));
   const sources: HunterSource[] = [];
 
   for (const source of greenhouse.items) {
@@ -141,6 +150,20 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
       access: 'OFFICIAL_PUBLIC_API',
     });
   }
+  for (const source of workable.items) {
+    sources.push({
+      id: source.id,
+      name: source.name,
+      company: source.company,
+      provider: 'WORKABLE',
+      tenant: source.subdomain,
+      markets: source.markets,
+      status: 'RESEARCH',
+      configured: true,
+      note: 'Workable requires documented authenticated API access. The undocumented careers feed is not executed.',
+      access: 'RESEARCH_ONLY',
+    });
+  }
 
   if (greenhouse.items.length === 0) {
     sources.push({
@@ -194,6 +217,20 @@ export function getSourceRegistry(env: Readonly<Record<string, string | undefine
         ? `Configuration rejected: ${smartRecruiters.error}`
         : 'No companies configured in HUNTER_SMARTRECRUITERS_SOURCES.',
       access: 'OFFICIAL_PUBLIC_API',
+    });
+  }
+  if (workable.items.length === 0) {
+    sources.push({
+      id: 'workable-configuration',
+      name: 'Workable authenticated API research',
+      provider: 'WORKABLE',
+      markets: [],
+      status: 'RESEARCH',
+      configured: false,
+      note: workable.error
+        ? `Configuration rejected: ${workable.error}`
+        : 'Documented API credentials and r_jobs access are required before an adapter can be activated.',
+      access: 'RESEARCH_ONLY',
     });
   }
 

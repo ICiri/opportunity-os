@@ -7,12 +7,15 @@ const staticRoutes = [
   {path: '/conversations', heading: 'Conversations'},
   {path: '/opportunities', heading: 'Remote opportunities'},
   {path: '/hunter', heading: 'Daily hunter'},
+  {path: '/sources', heading: 'Opportunity source coverage'},
+  {path: '/additional-jobs', heading: 'Additional / Freelance jobs'},
   {path: '/bounties', heading: 'Bounties'},
   {path: '/cv-studio', heading: 'CV Studio'},
   {path: '/relationships', heading: 'Paths, not contact lists.'},
   {path: '/planning', heading: 'Build a durable book of business.'},
   {path: '/analytics', heading: 'Communication performance'},
   {path: '/design-audit', heading: 'Design audit'},
+  {path: '/design-lab', heading: 'Three ways to build the opportunity OS.'},
   {path: '/companies/volito-digital/graph', heading: 'Volito Digital'},
 ];
 

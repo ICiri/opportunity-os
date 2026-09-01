@@ -20,3 +20,5 @@ supabase/.branches/
 # Private workstation audit notes derived from real mailbox data
 docs/EMAIL_AUDIT_INITIAL_FINDINGS.md
 docs/CONVERSATION_AUDIT.md
+docs/EMAIL_APPLICATION_LEDGER_*.csv
+docs/JOB_SEARCH_AND_EMAIL_AUDIT_*.md

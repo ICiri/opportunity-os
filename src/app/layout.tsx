@@ -42,6 +42,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
                 <Icon name="HU" />
                 Daily hunter
               </Link>
+              <Link href="/sources">
+                <Icon name="SR" />
+                Source coverage
+              </Link>
               <Link href="/bounties">
                 <Icon name="BO" />
                 Bounties
@@ -53,6 +57,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
               <Link href="/application-batches">
                 <Icon name="AP" />
                 Application batches
+              </Link>
+              <Link href="/additional-jobs">
+                <Icon name="+J" />
+                Additional jobs
               </Link>
               <Link href="/relationships">
                 <Icon name="GR" />
@@ -75,6 +83,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
                 <Icon name="OK" />
                 Design audit
               </Link>
+              <Link href="/design-lab">
+                <Icon name="DL" />
+                Design lab
+              </Link>
             </nav>
             <SystemPulse />
           </aside>
@@ -84,10 +96,12 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <Link href="/">Today</Link>
           <Link href="/conversations">Inbox</Link>
           <Link href="/hunter">Hunter</Link>
+          <Link href="/sources">Sources</Link>
           <Link href="/opportunities">Jobs</Link>
           <Link href="/bounties">Bounties</Link>
           <Link href="/cv-studio">CV</Link>
           <Link href="/application-batches">Apply</Link>
+          <Link href="/additional-jobs">Extra</Link>
         </nav>
       </body>
     </html>

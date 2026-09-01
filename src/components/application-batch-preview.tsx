@@ -19,9 +19,17 @@ type Candidate = {
   previouslyContacted: boolean;
 };
 
-export function ApplicationBatchPreview({candidates}: {candidates: Candidate[]}) {
+export function ApplicationBatchPreview({
+  candidates,
+  initialTrack = 'ADDITIONAL_FREELANCE',
+  singleTrack = false,
+}: {
+  candidates: Candidate[];
+  initialTrack?: 'ADDITIONAL_FREELANCE' | 'FULL_TIME';
+  singleTrack?: boolean;
+}) {
   const [page, setPage] = useState(0);
-  const [track, setTrack] = useState<'ADDITIONAL_FREELANCE' | 'FULL_TIME'>('ADDITIONAL_FREELANCE');
+  const [track, setTrack] = useState<'ADDITIONAL_FREELANCE' | 'FULL_TIME'>(initialTrack);
   const [approved, setApproved] = useState<Set<string>>(new Set());
   const trackedCandidates = useMemo(
     () => candidates.filter((candidate) => candidate.target.track === track),
@@ -54,6 +62,12 @@ export function ApplicationBatchPreview({candidates}: {candidates: Candidate[]})
       return next;
     });
 
+  const openSelectedApplications = () => {
+    selectable
+      .filter((candidate) => approved.has(candidate.id))
+      .forEach((candidate) => window.open(candidate.url, '_blank', 'noopener,noreferrer'));
+  };
+
   return (
     <div className="batch-preview">
       <section className="panel">
@@ -70,27 +84,29 @@ export function ApplicationBatchPreview({candidates}: {candidates: Candidate[]})
           blocker. Full-time opportunities are kept in a separate review queue. Verified recipients, Gmail deduplication
           and reviewed CVs are still required before delivery.
         </p>
-        <div className="button-row" aria-label="Application track">
-          <button
-            className={track === 'ADDITIONAL_FREELANCE' ? 'primary-control' : undefined}
-            onClick={() => {
-              setTrack('ADDITIONAL_FREELANCE');
-              setPage(0);
-            }}
-          >
-            Additional / Freelance (
-            {candidates.filter((candidate) => candidate.target.track === 'ADDITIONAL_FREELANCE').length})
-          </button>
-          <button
-            className={track === 'FULL_TIME' ? 'primary-control' : undefined}
-            onClick={() => {
-              setTrack('FULL_TIME');
-              setPage(0);
-            }}
-          >
-            Full-time ({candidates.filter((candidate) => candidate.target.track === 'FULL_TIME').length})
-          </button>
-        </div>
+        {!singleTrack && (
+          <div className="button-row" aria-label="Application track">
+            <button
+              className={track === 'ADDITIONAL_FREELANCE' ? 'primary-control' : undefined}
+              onClick={() => {
+                setTrack('ADDITIONAL_FREELANCE');
+                setPage(0);
+              }}
+            >
+              Additional / Freelance (
+              {candidates.filter((candidate) => candidate.target.track === 'ADDITIONAL_FREELANCE').length})
+            </button>
+            <button
+              className={track === 'FULL_TIME' ? 'primary-control' : undefined}
+              onClick={() => {
+                setTrack('FULL_TIME');
+                setPage(0);
+              }}
+            >
+              Full-time ({candidates.filter((candidate) => candidate.target.track === 'FULL_TIME').length})
+            </button>
+          </div>
+        )}
         <div className="button-row">
           <button disabled={page === 0} onClick={() => setPage((value) => value - 1)}>
             Previous 20
@@ -98,8 +114,8 @@ export function ApplicationBatchPreview({candidates}: {candidates: Candidate[]})
           <button disabled={page + 1 >= pages} onClick={() => setPage((value) => value + 1)}>
             Next 20
           </button>
-          <button className="primary-control" disabled title="Delivery is not connected until all safety gates pass.">
-            Send approved batch ({selectedVisible}/20) — locked
+          <button className="primary-control" disabled={selectedVisible === 0} onClick={openSelectedApplications}>
+            Open selected applications ({selectedVisible}/20)
           </button>
         </div>
         <label>
@@ -167,6 +183,10 @@ export function ApplicationBatchPreview({candidates}: {candidates: Candidate[]})
                 <a href={`/cv-studio?opportunity=${candidate.id}&language=en`}>Open source-linked CV preview →</a>
                 <small>Only APPROVED MASTER_EN facts with matching source hash are allowed.</small>
               </details>
+
+              <a className="primary-link" href={candidate.url} target="_blank" rel="noreferrer">
+                Apply now on official site <span>↗</span>
+              </a>
 
               <label>
                 <input

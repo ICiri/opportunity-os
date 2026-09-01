@@ -7,12 +7,12 @@ const beforeHeap = process.memoryUsage().heapUsed;
 const records: RawJob[] = Array.from({length: total}, (_, index) => {
   const canonical = index % unique;
   return {
-    sourceId: `source-${index % 8}`,
-    externalId: `external-${index}`,
+    sourceId: `source-${canonical % 8}`,
+    externalId: `external-${canonical}`,
     title: `Backend Engineer ${canonical}`,
     company: `Company ${canonical}`,
     location: 'EU Remote',
-    url: `https://example.test/jobs/${index}`,
+    url: `https://example.test/jobs/${canonical}`,
     publishedAt: '2026-08-16T00:00:00.000Z',
     description: 'EU remote B2B contract for payments and API integration.',
     potentialMax: 20_000,

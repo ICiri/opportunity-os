@@ -41,6 +41,34 @@ function databaseUrl(): string | null {
   return null;
 }
 
+export type RuntimeSourceState = 'LIVE' | 'STALE' | 'DISCONNECTED' | 'DEGRADED' | 'RESEARCH';
+
+export type RuntimeSourceEvidence = {
+  id: string;
+  runId: string;
+  name: string;
+  adapterName: string | null;
+  state: RuntimeSourceState;
+  checkedAt: string | null;
+  httpStatus: number | null;
+  itemsSeen: number;
+  regions: string[];
+  note: string | null;
+};
+
+export function runtimeSourceState(
+  storedStatus: string,
+  checkedAt: string | Date | null | undefined,
+  httpStatus: number | null | undefined,
+  now = new Date(),
+): RuntimeSourceState {
+  if (storedStatus === 'RESEARCH') return 'RESEARCH';
+  if (storedStatus === 'DEGRADED') return 'DEGRADED';
+  if (storedStatus !== 'LIVE') return 'DISCONNECTED';
+  if (!isVerificationCurrent(checkedAt, now)) return 'STALE';
+  return httpStatus && httpStatus >= 200 && httpStatus < 300 ? 'LIVE' : 'DEGRADED';
+}
+
 export async function persistHunterExecution(run: SearchRun, execution: HunterExecution, registry: HunterSource[]) {
   const auditFindings = auditHunterExecution(execution, registry);
   if (auditFindings.length) throw new Error(`HUNTER_EXECUTION_AUDIT_FAILED:${auditFindings.join(',')}`);
@@ -202,6 +230,46 @@ export async function persistHunterExecution(run: SearchRun, execution: HunterEx
           economically_scored_jobs=excluded.economically_scored_jobs
       `;
     });
+  } finally {
+    await sql.end();
+  }
+}
+
+export async function loadPersistedSourceEvidence(now = new Date()): Promise<RuntimeSourceEvidence[]> {
+  const url = databaseUrl();
+  if (!url) return [];
+  const sql = postgres(url, {max: 1, prepare: false});
+  try {
+    const rows = await sql<Record<string, unknown>[]>`
+      select distinct on(source.id)
+        source.id,run.id run_id,source.name,source.adapter_name,run_source.status,
+        coalesce(source.verified_at,run.finished_at,run.created_at) checked_at,
+        source.last_http_status,run_source.items_seen,source.coverage_regions,
+        coalesce(run_source.error,source.status_note) note
+      from public.search_run_sources run_source
+      join public.search_runs run on run.id=run_source.search_run_id
+      join public.sources source on source.id=run_source.source_id
+      where run.user_id=${LOCAL_USER_ID} and run.audit_status='PASS'
+      order by source.id,coalesce(run.finished_at,run.created_at) desc
+    `;
+    return rows
+      .map((row) => {
+        const checkedAt = row.checked_at ? new Date(String(row.checked_at)).toISOString() : null;
+        const httpStatus = row.last_http_status == null ? null : Number(row.last_http_status);
+        return {
+          id: String(row.id),
+          runId: String(row.run_id),
+          name: String(row.name),
+          adapterName: row.adapter_name ? String(row.adapter_name) : null,
+          state: runtimeSourceState(String(row.status), checkedAt, httpStatus, now),
+          checkedAt,
+          httpStatus,
+          itemsSeen: Number(row.items_seen ?? 0),
+          regions: Array.isArray(row.coverage_regions) ? row.coverage_regions.map(String) : [],
+          note: row.note ? String(row.note) : null,
+        } satisfies RuntimeSourceEvidence;
+      })
+      .sort((left, right) => left.name.localeCompare(right.name));
   } finally {
     await sql.end();
   }
